@@ -172,3 +172,16 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+
+
+# ------------ Project Specific Ignores -------------
+
+# OS generated files (macOS)
+.DS_Store
+
+# Downloaded data directory
+data/
+
+# Optional: Intermediate Numpy weights (if not needed for deployment)
+# *.npz
