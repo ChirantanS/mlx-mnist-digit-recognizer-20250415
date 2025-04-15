@@ -1,0 +1,44 @@
+version: '3.8' # Specify docker-compose version
+
+services:
+  # Service 1: The Streamlit Web Application
+  web:
+    build: . # Build the image from the Dockerfile in the current directory
+    ports:
+      - "8501:8501" # Map host port 8501 to container port 8501
+    environment:
+      # Pass database connection details as environment variables
+      # Note: Use service name 'db' as the host inside the Docker network
+      - DB_HOST=db
+      - DB_PORT=5432 # Internal port for Postgres
+      - DB_NAME=postgres # Use the standard DB name within Docker network
+      - DB_USER=postgres # Use the standard user
+      - DB_PASSWORD=mysecretpassword # Same password as used for db service
+      - STREAMLIT_SERVER_PORT=8501
+    # volumes:
+      # Optional: Mount local code for development (reflects changes without rebuild)
+      # Comment this out for a production-like build
+      # - .:/app
+    depends_on:
+      - db # Make web service wait for db service to start (basic dependency)
+
+  # Service 2: The PostgreSQL Database
+  db:
+    image: postgres:16 # Use the official PostgreSQL image
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persist database data using a named volume
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_DB=postgres # Ensure this database is created
+    expose:
+      - "5432" # Expose port 5432 *within* the Docker network (not necessarily to host)
+    healthcheck: # Optional but recommended: Check if DB is ready
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# Define named volume for persistent database data
+volumes:
+  postgres_data:
