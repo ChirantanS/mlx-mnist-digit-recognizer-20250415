@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.11-slim-bookworm
+FROM python:3.13-slim-bookworm
 # (Choose a specific Python version close to what you used, e.g., 3.11, 3.10. Avoid 3.13 for now if dependencies might lag)
 
 # Set the working directory in the container
